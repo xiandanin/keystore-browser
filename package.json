@@ -19,25 +19,17 @@
     "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.renderer.config.js",
     "test": "npm run unit && npm run e2e",
     "unit": "karma start test/unit/karma.conf.js",
-    "postinstall": "npm run lint:fix"
+    "postinstall": "npm run lint:fix",
+    "win32": "node .electron-vue/build.js && electron-builder --platform=win32  --arch=ia32",
+    "mac": "node .electron-vue/build.js && electron-builder --platform=drwin "
   },
   "build": {
+    "asar": false,
     "productName": "KeystoreBrowser",
     "appId": "in.xiandan.keystorebrowser",
     "directories": {
       "output": "build"
     },
-    "fileAssociations": [
-      {
-        "ext": "keystore"
-      },
-      {
-        "ext": "jks"
-      },
-      {
-        "ext": "apk"
-      }
-    ],
     "files": [
       "dist/electron/**/*"
     ],

@@ -1,12 +1,9 @@
 directories:
   output: build
   buildResources: build
-productName: keystore-browser
+asar: false
+productName: KeystoreBrowser
 appId: in.xiandan.keystorebrowser
-fileAssociations:
-  - ext: keystore
-  - ext: jks
-  - ext: apk
 files:
   - filter:
       - dist/electron/**/*

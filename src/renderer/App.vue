@@ -2,18 +2,19 @@
     <div id="app" v-loading.fullscreen.lock="loading">
         <div v-show="keystore==null" class="upload-container">
             <el-upload
+                    ref="upload"
                     drag
                     :show-file-list="false"
                     accept=".apk,.jks,.keysotre"
                     :before-upload="handleBeforeUpload"
                     action="#">
                 <i class="el-icon-upload"></i>
-                <div class="el-upload__text">将<em> Keystore 、 Apk </em>拖到此处</div>
+                <div id="upload_text" class="el-upload__text">将<em> Keystore 、 Apk </em>拖到此处</div>
             </el-upload>
         </div>
         <div v-show="keystore!=null">
             <div style="text-align: right;margin-bottom: 1%">
-                <el-button size="mini" @click="handleClickReset">重新上传</el-button>
+                <el-button size="mini" @click="handleClickReset">打开</el-button>
             </div>
             <el-tabs type="card" v-model="active" v-if="keystore != null">
                 <el-tab-pane v-for="it in keystore.aliases" :label="it.alias" :name="it.alias">
@@ -35,7 +36,7 @@
                             <span class="label">签名类型：</span>
                             <span class="value">{{it.signatureType}}</span>
                         </div>
-                        <div class="node-container" v-if="it.extras.length>0">
+                        <div class="node-container" v-if="it.extras!=null">
                             <span class="label">额外信息：</span>
                             <div v-for="(value,key) in it.extras" class="node-content">
                                 <span class="label">{{key}}：</span>
@@ -46,15 +47,15 @@
 
                     <!--keystore基本信息-->
                     <div v-else>
-                        <div><span class="label">别名：</span><span class="value">{{it.alias}}</span></div>
-
-                        <div><span class="label">创建时间：</span><span class="value">{{it.created_time_str}}</span></div>
+                        <div><span class="label">别名：</span><span class="value">{{it.alias}}</span>
+                            <span class="label" style="margin-left: 100px">创建时间：</span><span class="value">{{it.created_time_str}}</span>
+                        </div>
                     </div>
                     <div class="node-container">
                         <div class="label">所有者信息</div>
                         <div class="node-content">
                             <div>
-                                <span class="label">通用名称：</span>
+                                <span class="label">姓名：</span>
                                 <span class="value">{{it.cert.subject.commonName}}</span>
                             </div>
                             <div>
@@ -120,7 +121,7 @@
                     </div>
 
                     <!--apk平台格式-->
-                    <div v-if="isApk" class="node-container">
+                    <div class="node-container">
                         <div class="label">开放平台格式</div>
                         <div class="node-content">
                             <div v-for="f in it.cert.signature.format">
@@ -142,6 +143,7 @@
   const jarPath = path.join(__static, '/keystore-java-library.jar')
 
   const exec = require('child_process').exec
+
   export default {
     data () {
       return {
@@ -156,7 +158,6 @@
       }
     },
     created () {
-
     },
     methods: {
       loadFileInfo () {
@@ -167,8 +168,10 @@
         this.loading = true
 
         let that = this
-        // let cmdStr = 'java -jar /Users/dengyuhan/workspace/Github-Public/keystore-browser/keystore-java-library/out/keystore-java-library.jar /Users/dengyuhan/Downloads/DigizenAppStore.jks '+password
+        // let cmdStr = 'java -jar ' + jarPath + ' /Users/dengyuhan/Downloads/DigizenAppStore.jks zenithprdigizen'
+        // let cmdStr = 'java -jar ' + jarPath + ' /Users/dengyuhan/Downloads/dear_32_v3.4.5_20190226-145335_Alibaba.apk'
         let cmdStr = 'java -jar ' + jarPath + ' ' + this.params.filepath + ' ' + this.params.storepass
+
         console.log(cmdStr)
         let workerProcess = exec(cmdStr)
         // 打印错误的后台可执行程序输出
@@ -244,8 +247,7 @@
         return false
       },
       handleClickReset () {
-        this.keystore = null
-        this.params = {}
+        document.getElementById('upload_text').click()
       }
     }
   }
@@ -258,11 +260,11 @@
     }
 
     .label {
-        color: #333;
+        color: #222;
     }
 
     .value {
-        color: #777;
+        color: #666;
     }
 
     .node-container {
